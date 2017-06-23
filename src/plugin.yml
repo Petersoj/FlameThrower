@@ -1,0 +1,4 @@
+name: FlameThrower
+main: me.petersoj.FlameThrowerPlugin
+version: 1.0
+description: Adds flame throwing capabilities to Minecraft!

@@ -1,0 +1,5 @@
+# This sets the item ID of the flame thrower.
+item: 377
+
+# This sets the amount of time, in seconds, a fully fueled flame thrower can shoot.
+flame-thrower-time: 20
