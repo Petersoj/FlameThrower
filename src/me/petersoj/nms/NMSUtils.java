@@ -4,7 +4,7 @@ import net.minecraft.server.v1_12_R1.ChatMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public final class NMSUtils {
+public class NMSUtils {
 // I know that you can simply call player.spigot().sendMessage(), but I don't think that method exists for 1.8.8
 
     private static NMSVersion nmsVersion;
