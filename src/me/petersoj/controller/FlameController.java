@@ -1,19 +1,20 @@
 package me.petersoj.controller;
 
 import me.petersoj.FlameThrowerPlugin;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import me.petersoj.nms.NMSUtils;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -33,20 +34,39 @@ public class FlameController {
         FileConfiguration config = plugin.getConfig();
         this.flameThrowerID = config.getInt("item");
         this.flameThrowerTime = config.getInt("flame-thrower-time");
+
+        this.addRecipe();
+    }
+
+    private void addRecipe() {
+        ShapedRecipe recipe = new ShapedRecipe(getNewFlameThrower(5, true));
+
+        recipe.shape("B  ", "DT ", "C  ");
+
+        recipe.setIngredient('B', Material.BLAZE_POWDER);
+        recipe.setIngredient('D', Material.DISPENSER);
+        recipe.setIngredient('T', Material.TORCH);
+        recipe.setIngredient('C', Material.COAL);
+
+        Bukkit.addRecipe(recipe);
     }
 
     public ItemStack getNewFlameThrower(int refuels, boolean setsFire) {
         ItemStack flameThrower = new ItemStack(flameThrowerID);
-        this.setFlameThrowerLore(flameThrower, 100, refuels, setsFire);
+        this.setFlameThrowerLore(flameThrower, 100.0, refuels, setsFire);
         return flameThrower;
     }
 
-    private void setFlameThrowerLore(ItemStack flameThrower, int fuelPercentage, int refuels, boolean setsFire) {
+    private void setFlameThrowerLore(ItemStack flameThrower, double fuelPercentage, int refuels, boolean setsFire) {
         ItemMeta itemMeta = flameThrower.getItemMeta();
         itemMeta.setDisplayName(ChatColor.RED + "Flame " + ChatColor.GOLD + "Thrower");
 
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(ChatColor.DARK_RED + "Fuel: " + ChatColor.WHITE + fuelPercentage);
+
+        DecimalFormat df = new DecimalFormat("###.##");
+        df.setRoundingMode(RoundingMode.DOWN);
+
+        lore.add(ChatColor.DARK_RED + "Fuel: " + ChatColor.WHITE + df.format(fuelPercentage));
         lore.add(ChatColor.GRAY + "Re-fuels: " + ChatColor.WHITE + (refuels > -1 ? refuels : "Infinite"));
         if (setsFire) {
             lore.add(ChatColor.GOLD + "Sets fire to blocks");
@@ -62,7 +82,7 @@ public class FlameController {
 
             List<String> lore = flameThrower.getItemMeta().getLore();
 
-            int fuelPercentage = getFuel(lore);
+            double fuelPercentage = getFuel(lore) / 100;
             int refuels = getReFuels(lore);
             boolean setsFire = setsFire(lore);
 
@@ -72,12 +92,17 @@ public class FlameController {
             public void run() {
 
                 if (fuelPercentage > 0) {
+
                     this.shootFlames();
+
+                    this.fuelPercentage = fuelPercentage - (fuelPercentage / (flameThrowerTime * 20));
+
+                    System.out.println(fuelPercentage);
 
                     this.sendActionBar();
 
                     if (setsFire && Math.random() >= 0.8) { // Light fire to block one fifth of the time
-                        Block lookingBlock = player.getTargetBlock((Set<Material>) null, 11);
+                        Block lookingBlock = player.getTargetBlock((Set<Material>) null, 15); // Get target block in 15 block range
                         if (lookingBlock != null && lookingBlock.getType().isBlock()) {
                             Block upBlock = lookingBlock.getRelative(BlockFace.UP);
                             if (upBlock != null && upBlock.getType() == Material.AIR) {
@@ -90,28 +115,28 @@ public class FlameController {
                             }
                         }
                     }
-                    // Use flamethrower - minus fuel percentage, action bar
                 } else if (index == 0) { // Make sure this is the first time through
                     if (refuels > 0) {
-                        // Refuel - minus refuel, set fuel percentage to 100
+                        int itemIndex = player.getInventory().first(Material.COAL);
+                        if (itemIndex >= 0) {
+                            ItemStack coal = player.getInventory().getItem(itemIndex);
+                            coal.setAmount(coal.getAmount() - 1);
+                        } else {
+                            NMSUtils.sendActionBar(player, ChatColor.RED + "You need coal in order to refuel this Flame Thrower!");
+                            player.playSound(player.getLocation(), Sound.ITEM_FLINTANDSTEEL_USE, 1f, 1f);
+                        }
+
+                        this.fuelPercentage = 100;
+
+                        refuels--;
                     } else {
-                        // Out of fuel and uses
+                        NMSUtils.sendActionBar(player, ChatColor.RED + "You've run out of uses for this Flame Thrower!");
                     }
                 }
 
-
-                // if fuelpercentage > 0, use flamethrower
-                //   Decrement fuel
-                // else if refuels <= 0
-                //   if coal in inventory
-                //     refuel and cancel
-                // else
-                //   cancel task
-
-
                 if (index >= 4) {
                     if (fuelPercentage > 0 || refuels > 0) {
-                        setFlameThrowerLore(flameThrower, fuelPercentage, refuels, setsFire);
+                        setFlameThrowerLore(flameThrower, fuelPercentage * 100, refuels, setsFire);
                     }
                     this.cancel();
                 }
@@ -156,8 +181,8 @@ public class FlameController {
         }.runTaskTimer(plugin, 0, 1);
     }
 
-    private int getFuel(List<String> lore) {
-        return Integer.valueOf(ChatColor.stripColor(lore.get(0)).substring(6)); // get the first line and substring at 6th position
+    private double getFuel(List<String> lore) {
+        return Double.valueOf(ChatColor.stripColor(lore.get(0)).substring(6)); // get the first line and substring at 6th position
     }
 
     private int getReFuels(List<String> lore) { // Return -1 for unbreakable
