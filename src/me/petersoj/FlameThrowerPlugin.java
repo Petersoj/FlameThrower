@@ -19,6 +19,8 @@ public class FlameThrowerPlugin extends JavaPlugin {
         this.commands = new Commands(this);
         this.listeners = new Listeners(this);
 
+//        NMSUtils.setupNMS();
+
         this.listeners.listen();
     }
 

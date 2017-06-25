@@ -1,7 +1,10 @@
 package me.petersoj.nms;
 
 import net.minecraft.server.v1_12_R1.ChatMessageType;
+import net.minecraft.server.v1_12_R1.IChatBaseComponent;
+import net.minecraft.server.v1_12_R1.PacketPlayOutChat;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class NMSUtils {
@@ -9,20 +12,20 @@ public class NMSUtils {
 
     private static NMSVersion nmsVersion;
 
-    static {
-        String version = Bukkit.getVersion().toLowerCase();
+    public static void setupNMS() {
+        String version = Bukkit.getVersion();
 
-        if(version.contains("1.8.8")){
+        if (version.contains("1.8.8")) {
             nmsVersion = NMSVersion.v1_8_8;
-        }else if(version.contains("1.11.2")){
+        } else if (version.contains("1.11.2")) {
             nmsVersion = NMSVersion.v1_11_2;
-        }else if(version.contains("1.12")){
+        } else if (version.contains("1.12")) {
             nmsVersion = NMSVersion.v1_12;
         }
     }
 
-    public static void sendActionBar(Player player, String message){
-        switch(nmsVersion){
+    public static void sendActionBar(Player player, String message) {
+        switch (nmsVersion) {
             case v1_8_8:
                 sendActionBarv1_8_8(player, message);
                 break;
@@ -35,33 +38,28 @@ public class NMSUtils {
         }
     }
 
-    private static void sendActionBarv1_8_8(Player player, String message){
-        net.minecraft.server.v1_8_R3.IChatBaseComponent chatBaseComponent = net.minecraft.server.v1_8_R3.
-                IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + message + "\"}");
 
-        net.minecraft.server.v1_8_R3.PacketPlayOutChat packetPlayOutChat = new net.minecraft.server.v1_8_R3.
-                PacketPlayOutChat(chatBaseComponent, (byte) 2);
+    private static void sendActionBarv1_8_8(Player player, String message) {
+        net.minecraft.server.v1_8_R3.IChatBaseComponent chatBaseComponent = net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + message + "\"}");
+
+        net.minecraft.server.v1_8_R3.PacketPlayOutChat packetPlayOutChat = new net.minecraft.server.v1_8_R3.PacketPlayOutChat(chatBaseComponent, (byte) 2);
 
         ((org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutChat);
     }
 
-    private static void sendActionBarv1_11_2(Player player, String message){
-        net.minecraft.server.v1_11_R1.IChatBaseComponent chatBaseComponent = net.minecraft.server.v1_11_R1.
-                IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + message + "\"}");
+    private static void sendActionBarv1_11_2(Player player, String message) {
+        net.minecraft.server.v1_11_R1.IChatBaseComponent chatBaseComponent = net.minecraft.server.v1_11_R1.IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + message + "\"}");
 
-        net.minecraft.server.v1_11_R1.PacketPlayOutChat packetPlayOutChat = new net.minecraft.server.v1_11_R1.
-                PacketPlayOutChat(chatBaseComponent, (byte) 2);
+        net.minecraft.server.v1_11_R1.PacketPlayOutChat packetPlayOutChat = new net.minecraft.server.v1_11_R1.PacketPlayOutChat(chatBaseComponent, (byte) 2);
 
         ((org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutChat);
     }
 
-    private static void sendActionBarv1_12(Player player, String message){
-        net.minecraft.server.v1_12_R1.IChatBaseComponent chatBaseComponent = net.minecraft.server.v1_12_R1.
-                IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + message + "\"}");
+    private static void sendActionBarv1_12(Player player, String message) {
+        IChatBaseComponent chatBaseComponent = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + message + "\"}");
 
-        net.minecraft.server.v1_12_R1.PacketPlayOutChat packetPlayOutChat = new net.minecraft.server.v1_12_R1.
-                PacketPlayOutChat(chatBaseComponent, ChatMessageType.CHAT);
+        PacketPlayOutChat packetPlayOutChat = new PacketPlayOutChat(chatBaseComponent, ChatMessageType.CHAT);
 
-        ((org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutChat);
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutChat);
     }
 }

@@ -7,9 +7,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="spigot-api-1.12-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="craftbukkit-1.12-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="craftbukkit-1.11.2-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="craftbukkit-1.8.8-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="spigot-api-1.12-R0.1-SNAPSHOT" level="project" />
   </component>
 </module>

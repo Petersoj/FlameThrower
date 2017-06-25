@@ -9,4 +9,4 @@ commands:
     permission: flamethrower.give
 permissions:
   flamethrower.give:
-    default: false
+    default: op

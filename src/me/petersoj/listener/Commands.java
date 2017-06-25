@@ -19,10 +19,10 @@ public class Commands {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getLabel().equals("flamethrower")) {
 
-            if (args.length == 4) {
+            if (args.length == 3) {
                 Player giveTo = Bukkit.getPlayer(args[0]);
-                int refuels = Integer.valueOf(args[2]);
-                boolean setsFire = Boolean.valueOf(args[3]);
+                int refuels = Integer.valueOf(args[1]);
+                boolean setsFire = Boolean.valueOf(args[2]);
 
                 ItemStack flameThrower = plugin.getFlameController().getNewFlameThrower(refuels, setsFire);
 
