@@ -1,5 +1,6 @@
 # This sets the item ID of the flame thrower.
 item: 377
 
-# This sets the amount of time, in seconds, a fully fueled flame thrower can shoot.
-flame-thrower-time: 20
+# This sets whether players can craft flame throwers or not.
+# use true or false
+craft-flame-thrower: true

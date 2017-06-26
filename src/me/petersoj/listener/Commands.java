@@ -21,10 +21,12 @@ public class Commands {
 
             if (args.length == 3) {
                 Player giveTo = Bukkit.getPlayer(args[0]);
-                int refuels = Integer.valueOf(args[1]);
-                boolean setsFire = Boolean.valueOf(args[2]);
 
-                ItemStack flameThrower = plugin.getFlameController().getNewFlameThrower(refuels, setsFire);
+                int fullFuelSeconds = parseArgumentNumber(args[1]);
+                int refuels = parseArgumentNumber(args[2]);
+
+
+                ItemStack flameThrower = plugin.getFlameController().getNewFlameThrower(fullFuelSeconds, refuels);
 
                 if (giveTo.getInventory().addItem(flameThrower).size() > 0) { // If greater than 0, inventory was full.
                     giveTo.getWorld().dropItem(giveTo.getLocation(), flameThrower);
@@ -39,5 +41,15 @@ public class Commands {
             }
         }
         return true;
+    }
+
+    private int parseArgumentNumber(String arg) {
+        int number;
+        try {
+            number = Integer.parseInt(arg);
+        } catch (Exception e) { // Couldn't parse a number
+            number = -1; // Infinite
+        }
+        return number;
     }
 }

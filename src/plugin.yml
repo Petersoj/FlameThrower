@@ -4,8 +4,8 @@ version: 1.0
 description: Adds flame throwing capabilities to Minecraft!
 commands:
   flamethrower:
-    description: Gives a player a flamethrower with specified amount of refuels and if it sets blocks on fire.
-    usage: /flamethrower <player> <amount of refuels> <sets blocks on fire>
+    description: Gives a player a flamethrower with the specified time the fuel tank lasts and amount of refuels (-1 for inifinite)
+    usage: /flamethrower <player> <fuel seconds> <amount of refuels>
     permission: flamethrower.give
 permissions:
   flamethrower.give:

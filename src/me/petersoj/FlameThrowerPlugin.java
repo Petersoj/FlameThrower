@@ -3,6 +3,7 @@ package me.petersoj;
 import me.petersoj.controller.FlameController;
 import me.petersoj.listener.Commands;
 import me.petersoj.listener.Listeners;
+import me.petersoj.nms.NMSUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,7 +20,7 @@ public class FlameThrowerPlugin extends JavaPlugin {
         this.commands = new Commands(this);
         this.listeners = new Listeners(this);
 
-//        NMSUtils.setupNMS();
+        NMSUtils.setupNMS();
 
         this.listeners.listen();
     }
