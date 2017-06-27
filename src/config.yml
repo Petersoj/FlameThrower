@@ -1,6 +1,9 @@
 # This sets the item ID of the flame thrower.
 item: 377
 
+# This sets the percentage (%) chance of a flame thrower setting a block on fire.
+chance-of-fire: 30
+
 # This sets whether players can craft flame throwers or not.
 # use true or false
 craft-flame-thrower: true

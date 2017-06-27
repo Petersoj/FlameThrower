@@ -24,6 +24,7 @@ public class FlameController {
     private FlameThrowerPlugin plugin;
 
     private final int flameThrowerID;
+    private final double fireChance;
 
     public FlameController(FlameThrowerPlugin plugin) {
         this.plugin = plugin;
@@ -32,6 +33,7 @@ public class FlameController {
 
         FileConfiguration config = plugin.getConfig();
         this.flameThrowerID = config.getInt("item");
+        this.fireChance = ((double) config.getInt("chance-of-fire")) / 100;
 
         if (config.getBoolean("craft-flame-thrower")) {
             this.addRecipe();
@@ -165,7 +167,7 @@ public class FlameController {
                     shootSingleFlame(playerDirection, particleLocation);
                 }
 
-                if (Math.random() > 0.7) { // Light fire to block one fifth of the time
+                if (Math.random() < fireChance) { // Light fire to block one fifth of the time
                     Block lookingBlock = player.getTargetBlock((Set<Material>) null, 15); // Get target block in 15 block range
                     if (lookingBlock != null && lookingBlock.getType().isBlock()) {
                         Block upBlock = lookingBlock.getRelative(BlockFace.UP);
@@ -193,9 +195,22 @@ public class FlameController {
             }
 
             private void sendActionBar() {
+                String block = "\u2588"; // Block character unicode
+                double fuelRatio = (fuelTime / (double) fullFuelSeconds) * 10;
 
+                System.out.println(fuelRatio);
+
+                StringBuilder builder = new StringBuilder(ChatColor.RED + "Fuel: ");
+                for (int i = 0; i < 10; i++) { // For ten block characters
+                    if (i < fuelRatio) {
+                        builder.append(ChatColor.GREEN + block);
+                    } else {
+                        builder.append(ChatColor.GRAY + block);
+                    }
+                }
+
+                NMSUtils.sendActionBar(player, builder.toString());
             }
-
         }.runTaskTimer(plugin, 0, 0);
     }
 
