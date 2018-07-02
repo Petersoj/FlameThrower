@@ -1,2 +1,2 @@
 # Flame Thrower
-Adds flame throwing capabilities to Minecraft!
+Flame Thrower
